@@ -55,7 +55,7 @@ export class AuditTrailService {
             licenseFeatures.allowAuditLogging && filterEvent(event, config.ignore_filters)
         )
       )
-      .subscribe(([{ message, ...other }]) => this.logger.debug(message, other));
+      .subscribe(([{ message, ...other }]) => this.logger.info(message, other));
 
     const depsApi = {
       getCurrentUser,

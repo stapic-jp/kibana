@@ -43,7 +43,7 @@ describe('AuditTrail plugin', () => {
   beforeEach(() => {
     service = new AuditTrailService(logger);
     coreSetup = coreMock.createSetup();
-    logger.debug.mockClear();
+    logger.info.mockClear();
     http.registerOnPreResponse.mockClear();
   });
 
@@ -90,7 +90,7 @@ describe('AuditTrail plugin', () => {
         getSpacesService,
       });
       event$.next({ message: 'MESSAGE', other: 'OTHER' });
-      expect(logger.debug).toHaveBeenCalledWith('MESSAGE', { other: 'OTHER' });
+      expect(logger.info).toHaveBeenCalledWith('MESSAGE', { other: 'OTHER' });
     });
 
     it('does not log to audit trail if license does not allow', async () => {
@@ -118,7 +118,7 @@ describe('AuditTrail plugin', () => {
         getSpacesService,
       });
       event$.next({ message: 'MESSAGE', other: 'OTHER' });
-      expect(logger.debug).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('does not log to audit trail if event matches ignore filter', async () => {
@@ -136,7 +136,7 @@ describe('AuditTrail plugin', () => {
         getSpacesService,
       });
       event$.next({ message: 'MESSAGE', event: { action: 'ACTION' } });
-      expect(logger.debug).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
     });
 
     describe('logger', () => {
@@ -409,6 +409,11 @@ describe('#filterEvent', () => {
       id: 'TRACE_ID',
     },
   };
+
+  test(`keeps events when ignore filters are undefined or empty`, () => {
+    expect(filterEvent(event, undefined)).toBeTruthy();
+    expect(filterEvent(event, [])).toBeTruthy();
+  });
 
   test(`filters events correctly when a single match is found per criteria`, () => {
     expect(filterEvent(event, [{ actions: ['NO_MATCH'] }])).toBeTruthy();
